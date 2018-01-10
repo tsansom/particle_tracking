@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-Created on Thu Nov 30 13:12:36 2017
+Created on Mon Dec  4 11:17:21 2017
 
 @author: tsansom
 """
@@ -59,25 +59,24 @@ def make_plot():
     ax6 = fig.add_subplot(gs[5], sharey=ax4)
     return fig, ax1, ax2, ax3, ax4, ax5, ax6
 
-#define the wet, dry, and median directories
-ptrac_dirs = {'wet': ['2001-06', '2007-07', '2015-06'],
-              'dry': ['1996-05', '1999-08', '2011-04'],
-              'avg': ['1985-05', '1989-08', '2014-05']}
+#define the wet, dry, and average directories
+ptrac_dirs = {'wet': ['1990-07', '2004-05', '2007-07'],
+              'dry': ['1987-04', '2014-06', '2014-04'],
+              'avg': ['2008-08', '1995-04', '1994-05']}
 
 #this sets the x and y limits of each subplot
-extent = [-95.1, -94.58, 29.3, 29.8]
+extent = (-97.3, -96.8, 27.8, 28.3)
 
 #get current working directory
 cwd = os.getcwd()
 
 #point to the shapefile
-#shp_path = r'T:/baysestuaries/USERS/TSansom/TxBLEND/TPWD_BRodney/galves.shp'
-shp_path = os.path.join(cwd, 'data', 'shapefile', 'galves.shp')
+shp_path = os.path.join(cwd, 'data', 'shapefile', 'CBclosed.shp')
 
 #read the node coordinates
 if 'coords' not in vars():
     print('Reading node coordinates\n')
-    coords = tbt.read.coords(os.path.join(cwd, 'data', 'model_output', 'input'), 15)
+    coords = tbt.read.coords(os.path.join(cwd, 'data', 'model_output', 'input'), 14)
 else:
     print('Node coordinates already read in\n')
     
@@ -118,7 +117,7 @@ if 'mask' not in vars():
     mask = mask.reshape(glon.shape)
 else:
     print('Salinity mask already created\n')
-
+    
 if 'data' not in vars():
     data = {}
 
@@ -158,40 +157,36 @@ if 'data' not in vars():
                                 'avesalD': avesalD_data}
 else:
     print('All particle data already read in\n')
-
-#read the inflow data    
+    
 if 'inflow' not in vars():
     print('Reading inflow')
     inflow_path = os.path.join(cwd, 'data', 'model_input')
-    files = ['inflw-trinity-7715', 'inflw-san_jacinto-7715', 'inflw-buffalo-7715',
-             'inflw-clear-7715', 'inflw-dickinson-7715', 'inflw-cedar-7715',
-             'inflw-double-7715', 'inflw-oyster_galv-7715']
+    files = ['inflw-aransas-7715', 'inflw-mission-7715', 'inflw-copano-7715', 'inflw-cavasso-7715']
     ctr = 0
     for f in files:
         #need to set up the dataframe on the first iteration
         if ctr == 0:
             inflow = tbt.read.inflow(os.path.join(inflow_path, f))
             inflow.columns = [f.split('-')[1]]
-            #subsequent iterations append the data to the dataframe
+        #subsequent iterations append the data to the dataframe
         else:
             tmp = tbt.read.inflow(os.path.join(inflow_path, f))
             inflow[f.split('-')[1]] = tmp
         ctr += 1
     #scale the inflows units from cfs to 1000 cfs
     inflow['sum'] = inflow.sum(axis=1) / 1000
-            
+    
 else:
     print('Inflow data already read in\n')
-#create a new column for the sum of all inflows for each day
-
-
+    
 #this creates the ring to highlight the project area
-lats = [29.61501, 29.64978, 29.65036, 29.61558]
-lons = [-94.8749, -94.8755, -94.8345, -94.8338]
-ring = LinearRing(list(zip(lons, lats)))
+lats = [28.142815, 28.142622, 28.128572, 28.128588]
+lons = [-97.057931, -97.041549, -97.041542, -97.057923]
+ring = LinearRing(list(zip(lons,lats)))
 
 #create the big loop for scenarios
 #for key, Key in zip(['wet'], ['Wet']):
+#for key, Key in zip(['dry', 'avg'], ['Dry', 'Average']):
 for key, Key in zip(['wet', 'dry', 'avg'], ['Wet', 'Dry', 'Average']):
     #create the figure and axes
     fig, ax1, ax2, ax3, ax4, ax5, ax6 = make_plot()
@@ -210,7 +205,7 @@ for key, Key in zip(['wet', 'dry', 'avg'], ['Wet', 'Dry', 'Average']):
     fig.suptitle(r'{} Months'.format(Key), fontsize=24, x=0.01, y=0.99,
                  horizontalalignment='left', verticalalignment='top')
     #get the check nodes and coordinates (same for all)
-    cknodes = coords.loc[list(map(int, list(data['wet']['2001-06']['outflw1'].keys())))]
+    cknodes = coords.loc[list(map(int, list(data['wet']['1990-07']['outflw1'].keys())))]
     #create empty dictionaries to store parts of the plots that will be updated
     index = {}
     time_text = {}
@@ -336,8 +331,11 @@ for key, Key in zip(['wet', 'dry', 'avg'], ['Wet', 'Dry', 'Average']):
     qk = plt.quiverkey(quiv[month], 0.9, 0.96, 1, 'Velocity Vectors: ' + r'$1 \frac{ft}{s}$',
                        coordinates='figure', fontproperties={'size': 14}, labelpos='W')
     #set up the animator
-    anim = FuncAnimation(fig, update, frames=1345, repeat=False)
+    anim = FuncAnimation(fig, update, frames=10, repeat=False)
     #adjust the frame rate here (7 fps -> 3:12 minutes, 20 fps -> 1:07 minutes)
+    
+    ##########################################################################
+    #uncomment everything below this line if you don't want to save the animations
     fps = 20
     #choose the video converter (ffmpeg)
     plt.rcParams['animation.ffmpeg_path'] = get_ffmpeg_path()
