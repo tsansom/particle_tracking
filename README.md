@@ -4,4 +4,32 @@ To support oyster reef restoration projects and other potential transport projec
 
 Particle tracking studies are often conducted using velocity components from model output, which typically have time scales of 30 minutes to one hour. The novelty of implementing particle tracking at the model-level is that the calculation of velocity, and subsequently particle position, happen on the model time-step. The typical time-step for TxBLEND model runs is two or three minutes. This allows us to capture smaller perturbations of the velocity field that would otherwise be lost to averaging when using hourly model output for example.
 
+Animations created with the code herein can be viewed on [YouTube](https://www.youtube.com/playlist?list=PLNg5KJrHgyh6r2wyl6AuiNiDAEA1M-E6A). Here's a sample:
+
+![ptrac__sample](https://media.giphy.com/media/3o751PRYRK3LrHAly0/giphy.gif)
+
 ---
+
+## Prerequisites
+To run the `animate_particles.py` scripts, you'll need to install a few packages:
+
+#### Cartopy / Shapely
+[Cartopy](https://github.com/SciTools/cartopy) is used for mapping and [Shapely](https://github.com/Toblerity/Shapely) for manipulation of geometric objects in the Cartesian plane.
+```
+> conda install cartopy
+```
+This will install both packages as well as GEOS.
+
+#### UTM
+[UTM](https://github.com/thebb/utm) is used to convert coordinates from the state plane (UTM) to latitude and longitude. The original package does not support numpy and is very slow when converting many data points. There is a branch of a fork (and an unmerged pull request) of the original package that contains numpy support which can be installed as follows:
+```
+> git clone https://github.com/thebb/utm -b numpy
+> cd utm
+> python setup.py install
+```
+
+#### tbtools
+The [tbtools](https://github.com/tsansom/tbtools) package is my own creation for reading/writing/manipulating TxBLEND model input/output files. There is a sub-package, ptrac, that is used for reading particle tracking related files. It can be installed via pip:
+```
+> pip install tbtools
+```
