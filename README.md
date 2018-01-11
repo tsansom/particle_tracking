@@ -15,14 +15,14 @@ To run the `animate_particles.py` scripts, you'll need to install a few packages
 
 #### Cartopy / Shapely
 [Cartopy](https://github.com/SciTools/cartopy) is used for mapping and [Shapely](https://github.com/Toblerity/Shapely) for manipulation of geometric objects in the Cartesian plane.
-```
+```bash
 > conda install cartopy
 ```
 This will install both packages as well as GEOS.
 
 #### UTM
 [UTM](https://github.com/thebb/utm) is used to convert coordinates from the state plane (UTM) to latitude and longitude. The original package does not support numpy and is very slow when converting many data points. There is a branch of a fork (and an unmerged pull request) of the original package that contains numpy support which can be installed as follows:
-```
+```bash
 > git clone https://github.com/thebb/utm -b numpy
 > cd utm
 > python setup.py install
@@ -30,6 +30,19 @@ This will install both packages as well as GEOS.
 
 #### tbtools
 The [tbtools](https://github.com/tsansom/tbtools) package is my own creation for reading/writing/manipulating TxBLEND model input/output files. There is a sub-package, ptrac, that is used for reading particle tracking related files. It can be installed via pip:
-```
+```bash
 > pip install tbtools
+```
+
+#### FFmpeg
+[FFmpeg](https://www.ffmpeg.org) is a video converter and is necessary for saving the animations. It's available via brew for MacOS and apt-get for Linux which will add the path to the environmental variables. For Windows you will probably have to download, install, and add the path to the environmental variables manually.
+
+**MacOS**
+```bash
+> brew install ffmpeg
+```
+
+**Linux**
+```bash
+> sudo apt-get install ffmpeg_path
 ```

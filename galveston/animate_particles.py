@@ -80,7 +80,7 @@ if 'coords' not in vars():
     coords = tbt.read.coords(os.path.join(cwd, 'data', 'model_output', 'input'), 15)
 else:
     print('Node coordinates already read in\n')
-    
+
 #clip the coordinates to only contain points inside the extent
 #this is used for contouring salinity
 avesalD_nodes = coords[(coords['lon'] > extent[0]) &
@@ -122,7 +122,7 @@ else:
 if 'data' not in vars():
     data = {}
 
-#loop through the three scenarios (wet, dry, avg)    
+#loop through the three scenarios (wet, dry, avg)
     for key in ptrac_dirs.keys():
         #create a blank subdictionary for each scenario
         data[key] = {}
@@ -159,7 +159,7 @@ if 'data' not in vars():
 else:
     print('All particle data already read in\n')
 
-#read the inflow data    
+#read the inflow data
 if 'inflow' not in vars():
     print('Reading inflow')
     inflow_path = os.path.join(cwd, 'data', 'model_input')
@@ -179,7 +179,7 @@ if 'inflow' not in vars():
         ctr += 1
     #scale the inflows units from cfs to 1000 cfs
     inflow['sum'] = inflow.sum(axis=1) / 1000
-            
+
 else:
     print('Inflow data already read in\n')
 #create a new column for the sum of all inflows for each day
@@ -206,7 +206,7 @@ for key, Key in zip(['wet', 'dry', 'avg'], ['Wet', 'Dry', 'Average']):
     fig.tight_layout()
     #adjust the figure to make room for labels and titles
     fig.subplots_adjust(left=0.07, bottom=0.07, top=0.95)
-    #create the title 
+    #create the title
     fig.suptitle(r'{} Months'.format(Key), fontsize=24, x=0.01, y=0.99,
                  horizontalalignment='left', verticalalignment='top')
     #get the check nodes and coordinates (same for all)
@@ -270,7 +270,7 @@ for key, Key in zip(['wet', 'dry', 'avg'], ['Wet', 'Dry', 'Average']):
         #set minor ticks to days
         iax.xaxis.set_minor_locator(MultipleLocator(1))
         #set the plot limits and labels
-        iax.set(xlim=[inflow_tmp.index.min(), inflow_tmp.index.max()], 
+        iax.set(xlim=[inflow_tmp.index.min(), inflow_tmp.index.max()],
                       xlabel='{} {}'.format(month_name[mth], str(yr)))
         #if working on the leftmost plot (ctr=0) set the ylabel
         #if working on the two right panels, set the visibility of yticklabels to False
@@ -336,7 +336,7 @@ for key, Key in zip(['wet', 'dry', 'avg'], ['Wet', 'Dry', 'Average']):
     qk = plt.quiverkey(quiv[month], 0.9, 0.96, 1, 'Velocity Vectors: ' + r'$1 \frac{ft}{s}$',
                        coordinates='figure', fontproperties={'size': 14}, labelpos='W')
     #set up the animator
-    anim = FuncAnimation(fig, update, frames=1345, repeat=False)
+    anim = FuncAnimation(fig, update, frames=10, repeat=False)
     #adjust the frame rate here (7 fps -> 3:12 minutes, 20 fps -> 1:07 minutes)
     fps = 20
     #choose the video converter (ffmpeg)
@@ -344,7 +344,7 @@ for key, Key in zip(['wet', 'dry', 'avg'], ['Wet', 'Dry', 'Average']):
     #create the writer (this one stores each frame as temporary pngs and then stitches them
     #together at the end)
     writer = animation.FFMpegFileWriter(fps=fps)
-    #make sure the output directory exists, if not make it 
+    #make sure the output directory exists, if not make it
     if not os.path.exists(os.path.join(cwd, 'results')):
         os.mkdir(os.path.join(cwd, 'results'))
     #create the animation file name
